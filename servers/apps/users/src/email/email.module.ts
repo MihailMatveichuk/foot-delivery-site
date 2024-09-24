@@ -9,7 +9,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get('SMTP_HOST'),
           secure: true,
