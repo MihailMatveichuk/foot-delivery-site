@@ -16,14 +16,16 @@ model Avatar {
 }
 
 model User {
-  id       String   @id @default(cuid()) @map("_id")
-  name     String
-  email    String   @unique
-  password String
-  role     Role     @default(User)
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-  avatar   Avatar?
+  id           String   @id @default(cuid()) @map("_id")
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(User)
+  phone_number Float    @unique
+  address      String?
+  createAt     DateTime @default(now())
+  updateAt     DateTime @updatedAt
+  avatar       Avatar?
 }
 
 enum Role {
