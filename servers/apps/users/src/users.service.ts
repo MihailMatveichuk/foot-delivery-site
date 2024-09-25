@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto, RegisterDto } from './dto/user.dto';
 import { PrismaService } from '../../../prisma/prisma-service';
 import { IUserData } from '../types/index';
+import { EmailService } from './email/email.service';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +12,7 @@ export class UsersService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
   ) {}
 
   async register(dto: RegisterDto) {
@@ -25,6 +27,14 @@ export class UsersService {
     const activationToken = await this.createActivationToken(user);
 
     const activationCode = activationToken.activationCode;
+
+    await this.emailService.sendMail({
+      email: dto.email,
+      name: dto.name,
+      subject: 'Activate your account',
+      template: './activation-mail',
+      activationCode,
+    });
 
     await this.prisma.user.create({
       data: user,
