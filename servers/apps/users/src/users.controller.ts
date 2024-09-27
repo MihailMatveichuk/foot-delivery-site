@@ -6,7 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { RegisterDto } from './dto/user.dto';
+import { ActivationDto, RegisterDto } from './dto/user.dto';
 import { PrismaService } from '../../../prisma/prisma-service';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -56,6 +56,11 @@ export class UsersController {
         password: hashedPassword,
       });
     }
+  }
+
+  @Post('activation')
+  async activationUser(@Body() dto: ActivationDto) {
+    return await this.usersService.activationUser(dto);
   }
 
   @Get()

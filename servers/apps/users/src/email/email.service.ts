@@ -1,5 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 type MailOptions = {
   email: string;
@@ -11,7 +12,10 @@ type MailOptions = {
 
 @Injectable()
 export class EmailService {
-  constructor(private mailService: MailerService) {}
+  constructor(
+    private mailService: MailerService,
+    private configService: ConfigService,
+  ) {}
   async sendMail({
     subject,
     email,
