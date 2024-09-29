@@ -4,4 +4,5 @@ export interface IUserData {
   password: string;
   phone_number: number;
   address?: string;
+  isActive?: boolean;
 }

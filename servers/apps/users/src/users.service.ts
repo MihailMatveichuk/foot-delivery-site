@@ -22,6 +22,7 @@ export class UsersService {
       password: dto.password,
       phone_number: dto.phone_number,
       address: dto.address,
+      isActive: dto.isActive,
     };
 
     const activationToken = await this.createActivationToken(user);
@@ -54,7 +55,7 @@ export class UsersService {
         activationCode,
       },
       {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: this.configService.get<string>('ACTIVATION_SECRET'),
         expiresIn: '5m',
       },
     );
@@ -75,6 +76,7 @@ export class UsersService {
     if (newUser.activationCode !== activationCode) {
       throw new BadRequestException('Activation code is not valid or expired');
     }
+
     const { name, password, email, phone_number, address } = newUser.user;
 
     const existedUser = await this.prisma.user.findUnique({
@@ -83,21 +85,24 @@ export class UsersService {
       },
     });
 
-    if (existedUser) {
-      throw new BadRequestException('User already exists');
+    if (!existedUser) {
+      throw new BadRequestException('User has not already exists');
     }
 
-    const user = await this.prisma.user.create({
+    await this.prisma.user.update({
+      where: {
+        email,
+      },
       data: {
         name,
-        email,
         password,
         phone_number,
         address,
+        isActive: true,
       },
     });
 
-    return { user };
+    return { message: 'User has been activated' };
   }
 
   async login(dto: LoginDto): Promise<any> {

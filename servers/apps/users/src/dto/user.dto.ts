@@ -25,6 +25,9 @@ export class RegisterDto {
 
   @Field()
   address: string;
+
+  @Field({ defaultValue: false })
+  isActive: boolean;
 }
 
 @InputType()

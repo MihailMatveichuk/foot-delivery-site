@@ -8,23 +8,24 @@ datasource db {
 }
 
 model Avatar {
-  id        String @id @default(cuid()) @map("_id")
   public_id String @unique
   url       String
   user_id   String @unique
+  id        String @id @default(cuid()) @map("_id")
   user      User   @relation(fields: [user_id], references: [id])
 }
 
 model User {
-  id           String   @id @default(cuid()) @map("_id")
   name         String
   email        String   @unique
   password     String
   role         Role     @default(User)
-  phone_number Float    @unique
-  address      String?
   createAt     DateTime @default(now())
   updateAt     DateTime @updatedAt
+  id           String   @id @default(cuid()) @map("_id")
+  address      String?
+  isActive     Boolean  @default(false)
+  phone_number Float    @unique
   avatar       Avatar?
 }
 
