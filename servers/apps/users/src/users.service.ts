@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtModuleOptions, JwtService } from '@nestjs/jwt';
-import { ActivationDto, LoginDto, RegisterDto } from './dto/user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { LoginDto, RegisterDto } from './dto/user.dto';
 import { PrismaService } from '../../../prisma/prisma-service';
 import { IUserData } from '../types/index';
 import { EmailService } from './email/email.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -63,21 +64,8 @@ export class UsersService {
     return { token, activationCode };
   }
 
-  async activationUser(dto: ActivationDto) {
-    const { activationCode, activationToken } = dto;
-
-    const newUser: { user: IUserData; activationCode: string } =
-      this.jwtService.verify(activationToken, {
-        secret: this.configService.get<string>(
-          'ACTIVATION_SECRET',
-        ) as JwtModuleOptions as string,
-      });
-
-    if (newUser.activationCode !== activationCode) {
-      throw new BadRequestException('Activation code is not valid or expired');
-    }
-
-    const { name, password, email, phone_number, address } = newUser.user;
+  async activationUser(user: IUserData) {
+    const { name, password, email, phone_number, address } = user;
 
     const existedUser = await this.prisma.user.findUnique({
       where: {
@@ -107,13 +95,25 @@ export class UsersService {
 
   async login(dto: LoginDto): Promise<any> {
     const { password, email } = dto;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
-    const user = {
-      password,
-      email,
-    };
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
 
-    return user;
+    const isPasswordIsValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordIsValid) {
+      throw new BadRequestException('Password is not valid');
+    }
+
+    const { token } = await this.createActivationToken(user);
+
+    return { user, token };
   }
 
   async getAllUsers() {
