@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { IUserData } from '../types';
 import { JwtModuleOptions, JwtService } from '@nestjs/jwt';
+import { LoginResponse } from './types/user.types';
 
 @Controller('users')
 export class UsersController {
@@ -82,7 +83,7 @@ export class UsersController {
   }
 
   @Post('login')
-  async login(@Body() dto: LoginDto) {
+  async login(@Body() dto: LoginDto): Promise<LoginResponse> {
     return await this.usersService.login(dto);
   }
 

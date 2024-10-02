@@ -6,6 +6,7 @@ import { PrismaService } from '../../../prisma/prisma-service';
 import { IUserData } from '../types/index';
 import { EmailService } from './email/email.service';
 import * as bcrypt from 'bcrypt';
+import { TokenSender } from './utils/sendToken';
 
 @Injectable()
 export class UsersService {
@@ -111,9 +112,9 @@ export class UsersService {
       throw new BadRequestException('Password is not valid');
     }
 
-    const { token } = await this.createActivationToken(user);
+    const tokenSender = new TokenSender(this.jwtService, this.configService);
 
-    return { user, token };
+    return await tokenSender.sendToken(user);
   }
 
   async getAllUsers() {
