@@ -117,8 +117,16 @@ export class UsersService {
     return await tokenSender.sendToken(user);
   }
 
-  async getAllUsers() {
+  async getAllUsers(req: any): Promise<any> {
     const users = await this.prisma.user.findMany({});
-    return users;
+    const { access_token, refresh_token } = req.headers;
+    if (access_token && refresh_token) {
+      return { users, access_token, refresh_token };
+    }
+  }
+
+  async logout(req: any) {
+    req.access_token = null;
+    req.refresh_token = null;
   }
 }

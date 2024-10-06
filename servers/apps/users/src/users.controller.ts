@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ActivationDto, LoginDto, RegisterDto } from './dto/user.dto';
@@ -13,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { IUserData } from '../types';
 import { JwtModuleOptions, JwtService } from '@nestjs/jwt';
 import { LoginResponse } from './types/user.types';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -87,8 +90,16 @@ export class UsersController {
     return await this.usersService.login(dto);
   }
 
+  // @UseGuards(AuthGuards)
+  @UseGuards(AuthGuard)
   @Get()
-  async getAllUsers() {
-    return await this.usersService.getAllUsers();
+  async getAllUsers(@Req() req: any) {
+    return await this.usersService.getAllUsers(req);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  async logout(@Req() req: any) {
+    return await this.usersService.logout(req);
   }
 }

@@ -14,7 +14,7 @@ export class TokenSender {
       },
       {
         secret: this.configService.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: '15m',
+        expiresIn: '1m',
       },
     );
 
@@ -28,6 +28,6 @@ export class TokenSender {
       },
     );
 
-    return { user, accessToken, refreshToken };
+    return { user, access_token: accessToken, refresh_token: refreshToken };
   }
 }
