@@ -1,6 +1,5 @@
 'use client';
 
-import styles from '@/utils/style';
 import {
   Navbar,
   NavbarBrand,
@@ -10,14 +9,20 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   Link,
+  useDisclosure,
 } from '@nextui-org/react';
+import { CgProfile } from 'react-icons/cg';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+
 import ProfileDropDown from './ProfileDropDown';
-import { CgProfile } from 'react-icons/cg';
+import AuthModal from './AuthModal';
+
+import styles from '@/utils/style';
 
 const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const pathname = usePathname();
 
   const navItems = [
@@ -91,10 +96,11 @@ const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
       {isAuthorized ? (
         <ProfileDropDown />
       ) : (
-        <NavbarContent justify="end" as="button">
-          <CgProfile className="text-[2rem]" />
+        <NavbarContent justify="end">
+          <CgProfile className="text-[2rem] cursor-pointer" onClick={onOpen} />
         </NavbarContent>
       )}
+      {<AuthModal isOpen={isOpen} onOpenChange={onOpenChange} />}
     </Navbar>
   );
 };
