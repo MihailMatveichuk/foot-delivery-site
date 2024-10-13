@@ -1,10 +1,4 @@
-import {
-  ModalBody,
-  Input,
-  Checkbox,
-  Button,
-  ModalFooter,
-} from '@nextui-org/react';
+import { ModalBody, Input, Button, ModalFooter } from '@nextui-org/react';
 
 import React, { Dispatch, SetStateAction } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';

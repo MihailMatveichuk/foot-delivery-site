@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  Button,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-} from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader } from '@nextui-org/react';
 import { useState } from 'react';
 
 import LoginModal from '@/shared/LoginModal';
