@@ -8,7 +8,6 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-  Link,
   useDisclosure,
 } from '@nextui-org/react';
 import { CgProfile } from 'react-icons/cg';
@@ -19,6 +18,7 @@ import ProfileDropDown from './ProfileDropDown';
 import AuthModal from './AuthModal';
 
 import styles from '@/utils/style';
+import Link from 'next/link';
 
 const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,9 +50,8 @@ const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
 
   const navBarItems = ({ title, url }: { title: string; url: string }) => (
     <Link
-      className={`w-full text-white ${pathname === url && 'text-[#2190ffcb]'}`}
+      className={`w-full ${pathname === url && 'text-[#2190ffcb]'}`}
       href={url}
-      size="lg"
     >
       {title}
     </Link>
@@ -80,9 +79,7 @@ const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
         justify="center"
       >
         {navItems.map((item, index) => (
-          <NavbarItem key={`${item}-${index}`} isActive={pathname === item.url}>
-            {navBarItems(item)}
-          </NavbarItem>
+          <NavbarItem key={`${item}-${index}`}>{navBarItems(item)}</NavbarItem>
         ))}
       </NavbarContent>
       {/* {!isAuthorized && <RegisterAndLoginSection />} */}
