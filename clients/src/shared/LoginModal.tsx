@@ -10,6 +10,9 @@ import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
 } from 'react-icons/ai';
+import { setCookie } from 'cookies-next';
+
+import login from '@/app/routes/login.routes';
 
 const LoginModal = ({
   changeModal,
@@ -19,11 +22,12 @@ const LoginModal = ({
   onClose: () => void;
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isSubmitted, isValid },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       email: '',
@@ -33,12 +37,26 @@ const LoginModal = ({
     mode: 'onSubmit',
   });
 
-  const onSubmit: SubmitHandler<ILoginForm> = (data) => {
-    console.log(data);
-    console.log(isSubmitted);
-    setTimeout(() => {
-      alert('Data was saved!!');
-    }, 500);
+  const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
+    try {
+      const { access_token, refresh_token, user } = await login({
+        email: data.email,
+        password: data.password,
+      });
+
+      setCookie('access_token', access_token);
+      setCookie('refresh_token', refresh_token);
+      console.log(user);
+      setError('');
+      onClose();
+
+      setTimeout(() => {
+        alert('Data was saved!!');
+      }, 500);
+    } catch (error) {
+      setError('Invalid login credentials');
+      console.log(error);
+    }
   };
 
   return (
@@ -91,6 +109,9 @@ const LoginModal = ({
         {errors.password && (
           <p className="text-red-500 text-[10px]">{errors.password.message}</p>
         )}
+        {error && !errors.password && !errors.email && (
+          <p className="text-red-500 text-[10px]">{error}</p>
+        )}
         <div className="flex justify-end  w-full">
           <p
             className="font-Poppins font-[500] text-[12px] text-[#2190ffcb] cursor-pointer hover:text-[#2190fff6] transform transition-all duration-300"
@@ -103,7 +124,6 @@ const LoginModal = ({
         <ModalFooter className="flex  flex-col px-0 gap-4">
           <Button
             className="bg-[#2190ffcb]"
-            onPress={isValid ? onClose : () => {}}
             type="submit"
             disabled={isSubmitting}
           >
