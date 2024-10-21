@@ -6,6 +6,8 @@ import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
+import register from '@/app/routes/register.route';
+
 const RegisterModal = ({
   changeModal,
   onClose,
@@ -14,10 +16,12 @@ const RegisterModal = ({
   onClose: () => void;
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [error, setError] = useState('');
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       name: '',
@@ -30,16 +34,31 @@ const RegisterModal = ({
     mode: 'onSubmit',
   });
 
-  const onSubmit: SubmitHandler<IRegisterForm> = (data) => {
-    console.log(data);
-    setTimeout(() => {
-      alert('Data was saved!!');
-    }, 500);
+  const onSubmit: SubmitHandler<IRegisterForm> = async (data) => {
+    try {
+      const response = await register({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        phone_number: data.phone_number,
+        address: data.address,
+      });
+
+      console.log(response);
+      setError('');
+      onClose();
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        console.log(error);
+      }
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <ModalBody>
+        {error && <p className="text-red-500">This user is already exists</p>}
         <Controller
           name="name"
           control={control}
@@ -144,7 +163,6 @@ const RegisterModal = ({
           </p>
           <Button
             className="bg-[#2190ffcb]"
-            onPress={isValid ? onClose : () => {}}
             type="submit"
             disabled={isSubmitting}
           >

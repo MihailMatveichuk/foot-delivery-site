@@ -12,7 +12,7 @@ import {
 } from 'react-icons/ai';
 import { setCookie } from 'cookies-next';
 
-import login from '@/app/routes/login.routes';
+import login from '@/app/routes/login.route';
 
 const LoginModal = ({
   changeModal,
@@ -49,10 +49,6 @@ const LoginModal = ({
       console.log(user);
       setError('');
       onClose();
-
-      setTimeout(() => {
-        alert('Data was saved!!');
-      }, 500);
     } catch (error) {
       setError('Invalid login credentials');
       console.log(error);
@@ -62,6 +58,7 @@ const LoginModal = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <ModalBody>
+        {error && <p className="text-red-500">{error}</p>}
         <Controller
           name="email"
           control={control}
@@ -108,9 +105,6 @@ const LoginModal = ({
         </div>
         {errors.password && (
           <p className="text-red-500 text-[10px]">{errors.password.message}</p>
-        )}
-        {error && !errors.password && !errors.email && (
-          <p className="text-red-500 text-[10px]">{error}</p>
         )}
         <div className="flex justify-end  w-full">
           <p

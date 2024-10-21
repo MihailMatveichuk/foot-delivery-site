@@ -4,8 +4,6 @@ type LoginData = {
 };
 
 export default async function POST(body: LoginData) {
-  const { email, password } = body;
-
   const response = await fetch('http://localhost:3001/users/login', {
     method: 'POST',
     headers: {
@@ -13,7 +11,7 @@ export default async function POST(body: LoginData) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': 'true',
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ ...body }),
   });
 
   if (!response.ok) {

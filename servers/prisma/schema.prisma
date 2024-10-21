@@ -25,7 +25,7 @@ model User {
   id           String   @id @default(cuid()) @map("_id")
   address      String?
   isActive     Boolean  @default(false)
-  phone_number Float    @unique
+  phone_number String   @unique
   avatar       Avatar?
 }
 

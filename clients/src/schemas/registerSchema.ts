@@ -11,8 +11,8 @@ export const RegisterFormSchema = z.object({
   phone_number: z
     .string()
     .min(1, 'Phone number is required')
-    .regex(/^[0-9]{10}$/, 'Phone number must be 10 digits'),
-  address: z.string().min(1, 'Address is required'),
+    .regex(/^[0-9]{12}$/, 'Phone number must be 10 digits'),
+  address: z.string().optional(),
 });
 
 export type IRegisterForm = z.infer<typeof RegisterFormSchema>;

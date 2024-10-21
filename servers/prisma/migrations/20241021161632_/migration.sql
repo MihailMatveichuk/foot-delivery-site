@@ -22,7 +22,7 @@ CREATE TABLE "User" (
     "_id" TEXT NOT NULL,
     "address" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT false,
-    "phone_number" DOUBLE PRECISION NOT NULL,
+    "phone_number" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("_id")
 );
