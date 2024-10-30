@@ -1,3 +1,5 @@
+'use client';
+
 import { IRegisterForm, RegisterFormSchema } from '@/schemas/registerSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -12,6 +14,7 @@ import {
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import toast, { Toaster } from 'react-hot-toast';
 
 import register from '@/app/routes/register.route';
 import styles from '@/utils/style';
@@ -22,7 +25,6 @@ const RegisterModal = ({
   changeModalState: Dispatch<SetStateAction<string>>;
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [isLoading, setLoading] = useState(false);
 
   const {
@@ -52,14 +54,16 @@ const RegisterModal = ({
         address: data.address,
       });
 
+      toast.success('Please check your email to activate your account!');
+
       localStorage.setItem('activation_token', activationToken.token);
 
-      setError('');
-
-      changeModalState('Activation');
+      setTimeout(() => {
+        changeModalState('Activation');
+      }, 2000);
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        toast.error('This user has already exist!');
       }
     } finally {
       setLoading(false);
@@ -70,7 +74,7 @@ const RegisterModal = ({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <ModalHeader className="flex flex-col gap-1">Sing Up</ModalHeader>
       <ModalBody>
-        {error && <p className="text-red-500">This user is already exists</p>}
+        <Toaster />
         <Controller
           name="name"
           control={control}

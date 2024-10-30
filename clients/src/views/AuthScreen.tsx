@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function AuthScreen({ isOpen, onOpenChange }: Props) {
-  const [activeState, setActiveState] = useState('Login');
+  const [activeState, setActiveState] = useState('Activation');
 
   const handleLoginModalOpen = () => {
     onOpenChange();
@@ -40,7 +40,7 @@ export default function AuthScreen({ isOpen, onOpenChange }: Props) {
                 <RegisterModal changeModalState={setActiveState} />
               )}
               {activeState === 'Activation' && (
-                <ActivationModal setActiveState={setActiveState} />
+                <ActivationModal changeModalState={setActiveState} />
               )}
             </>
           )}

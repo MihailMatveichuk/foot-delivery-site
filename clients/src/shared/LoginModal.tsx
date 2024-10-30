@@ -1,3 +1,5 @@
+'use client';
+
 import {
   ModalBody,
   Input,
@@ -18,6 +20,7 @@ import {
   AiOutlineEyeInvisible,
 } from 'react-icons/ai';
 import { setCookie } from 'cookies-next';
+import toast, { Toaster } from 'react-hot-toast';
 
 import login from '@/app/routes/login.route';
 import styles from '@/utils/style';
@@ -31,7 +34,6 @@ const LoginModal = ({
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const {
     control,
@@ -58,11 +60,15 @@ const LoginModal = ({
 
       setCookie('access_token', access_token);
       setCookie('refresh_token', refresh_token);
-      setError('');
-      onClose();
+
+      toast.success('Login successful!');
+
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
       if (error instanceof Error) {
-        setError('Invalid login credentials');
+        toast.error('Invalid login credentials. Try again!');
       }
     } finally {
       setLoading(false);
@@ -73,7 +79,7 @@ const LoginModal = ({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <ModalHeader className="flex flex-col gap-1">Login</ModalHeader>
       <ModalBody>
-        {error && <p className="text-red-500">{error}</p>}
+        <Toaster />
         <Controller
           name="email"
           control={control}

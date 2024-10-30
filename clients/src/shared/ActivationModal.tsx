@@ -1,4 +1,6 @@
-import { useRef, useState } from 'react';
+'use client';
+
+import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { Button, ModalBody, Spinner } from '@nextui-org/react';
 import toast, { Toaster } from 'react-hot-toast';
 import { VscWorkspaceTrusted } from 'react-icons/vsc';
@@ -7,10 +9,6 @@ import activationService from '@/app/routes/activationUser.route';
 
 import styles from '@/utils/style';
 
-type Props = {
-  setActiveState: (route: string) => void;
-};
-
 type VerifyNumber = {
   '0': string;
   '1': string;
@@ -18,7 +16,11 @@ type VerifyNumber = {
   '3': string;
 };
 
-const ActivationModal = ({ setActiveState }: Props) => {
+const ActivationModal = ({
+  changeModalState,
+}: {
+  changeModalState: Dispatch<SetStateAction<string>>;
+}) => {
   const [invalidError, setInvalidError] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
@@ -40,6 +42,7 @@ const ActivationModal = ({ setActiveState }: Props) => {
     const verificationNumber = Object.values(verifyNumber).join('');
     const activationToken = localStorage.getItem('activation_token');
     if (verificationNumber.length !== 4) {
+      toast.error('Please enter a valid verification code!');
       setInvalidError(true);
       return;
     } else {
@@ -54,7 +57,7 @@ const ActivationModal = ({ setActiveState }: Props) => {
         localStorage.removeItem('activation_token');
         toast.success('Account activated successfully!');
         setTimeout(() => {
-          setActiveState('Login');
+          changeModalState('Login');
         }, 2000);
       } catch (error) {
         if (error instanceof Error) {
@@ -68,6 +71,7 @@ const ActivationModal = ({ setActiveState }: Props) => {
   };
 
   const handleInputChange = (index: number, value: string) => {
+    setInvalidError(false);
     const newVerifyNumber = { ...verifyNumber, [index]: value.slice(0, 1) };
     setVerifyNumber(newVerifyNumber);
 
@@ -122,7 +126,7 @@ const ActivationModal = ({ setActiveState }: Props) => {
         Go back to sign in?
         <span
           className="text-[#2190ff] pl-1 cursor-pointer"
-          onClick={() => setActiveState('Login')}
+          onClick={() => changeModalState('Login')}
         >
           Sign in
         </span>
