@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function AuthScreen({ isOpen, onOpenChange }: Props) {
-  const [activeState, setActiveState] = useState('Activation');
+  const [activeState, setActiveState] = useState('Login');
 
   const handleLoginModalOpen = () => {
     onOpenChange();
