@@ -1,22 +1,29 @@
 import { IRegisterForm, RegisterFormSchema } from '@/schemas/registerSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ModalBody, Input, Button, ModalFooter } from '@nextui-org/react';
+import {
+  ModalBody,
+  Input,
+  Button,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+} from '@nextui-org/react';
 
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 import register from '@/app/routes/register.route';
+import styles from '@/utils/style';
 
 const RegisterModal = ({
-  changeModal,
-  onClose,
+  changeModalState,
 }: {
-  changeModal: Dispatch<SetStateAction<boolean>>;
-  onClose: () => void;
+  changeModalState: Dispatch<SetStateAction<string>>;
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   const {
     control,
@@ -36,7 +43,8 @@ const RegisterModal = ({
 
   const onSubmit: SubmitHandler<IRegisterForm> = async (data) => {
     try {
-      const response = await register({
+      setLoading(true);
+      const { activationToken } = await register({
         email: data.email,
         password: data.password,
         name: data.name,
@@ -44,19 +52,23 @@ const RegisterModal = ({
         address: data.address,
       });
 
-      console.log(response);
+      localStorage.setItem('activation_token', activationToken.token);
+
       setError('');
-      onClose();
+
+      changeModalState('Activation');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
-        console.log(error);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <ModalHeader className="flex flex-col gap-1">Sing Up</ModalHeader>
       <ModalBody>
         {error && <p className="text-red-500">This user is already exists</p>}
         <Controller
@@ -157,16 +169,18 @@ const RegisterModal = ({
         <ModalFooter className="flex flex-col px-0 gap-4">
           <p
             className="text-center font-Poppins font-[500] text-[12px] text-[#2190ffcb] cursor-pointer hover:text-[#2190fff6] transform transition-all duration-300"
-            onClick={() => changeModal(true)}
+            onClick={() => changeModalState('Login')}
           >
             I have already signed in
           </p>
           <Button
-            className="bg-[#2190ffcb]"
+            className={`${styles.button} ${
+              isLoading && 'cursor-not-allowed bg-[#2190ff9d]'
+            }`}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting && isLoading}
           >
-            Sing In
+            {isLoading ? <Spinner size="md" /> : 'Sign Up'}
           </Button>
         </ModalFooter>
       </ModalBody>

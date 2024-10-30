@@ -1,6 +1,6 @@
 const styles = {
   logo: 'text-[20px] font-Poppins font-[500]',
-  title: 'text-[25px] font-[500] font-Poppins text-center py-2',
+  title: 'text-[22px] font-[500] font-Poppins text-center py-4',
   label: 'text-[16px] font-Poppins text-white',
   input:
     'w-full bg-transparent border rounded h-[40px] px-2 outline-none mt-[10px] font-Poppins',

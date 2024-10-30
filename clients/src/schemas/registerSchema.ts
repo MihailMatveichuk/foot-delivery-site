@@ -11,7 +11,10 @@ export const RegisterFormSchema = z.object({
   phone_number: z
     .string()
     .min(1, 'Phone number is required')
-    .regex(/^[0-9]{12}$/, 'Phone number must be 10 digits'),
+    .regex(
+      /^\+?[0-9]{10,13}$/,
+      'Phone number must be between 10 and 13 digits, including an optional "+" symbol at the beginning'
+    ),
   address: z.string().optional(),
 });
 

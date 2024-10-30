@@ -28,8 +28,6 @@ export class UsersController {
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    console.log(dto);
-
     const isEmailExisted = await this.prisma.user.findUnique({
       where: {
         email: dto.email,

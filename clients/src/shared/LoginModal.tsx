@@ -1,4 +1,11 @@
-import { ModalBody, Input, Button, ModalFooter } from '@nextui-org/react';
+import {
+  ModalBody,
+  Input,
+  Button,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+} from '@nextui-org/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 
@@ -13,15 +20,17 @@ import {
 import { setCookie } from 'cookies-next';
 
 import login from '@/app/routes/login.route';
+import styles from '@/utils/style';
 
 const LoginModal = ({
-  changeModal,
+  changeModalState,
   onClose,
 }: {
-  changeModal: Dispatch<SetStateAction<boolean>>;
+  changeModalState: Dispatch<SetStateAction<string>>;
   onClose: () => void;
 }) => {
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const {
@@ -39,24 +48,30 @@ const LoginModal = ({
 
   const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
     try {
+      setLoading(true);
       const { access_token, refresh_token, user } = await login({
         email: data.email,
         password: data.password,
       });
 
+      console.log(user);
+
       setCookie('access_token', access_token);
       setCookie('refresh_token', refresh_token);
-      console.log(user);
       setError('');
       onClose();
     } catch (error) {
-      setError('Invalid login credentials');
-      console.log(error);
+      if (error instanceof Error) {
+        setError('Invalid login credentials');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <ModalHeader className="flex flex-col gap-1">Login</ModalHeader>
       <ModalBody>
         {error && <p className="text-red-500">{error}</p>}
         <Controller
@@ -109,7 +124,7 @@ const LoginModal = ({
         <div className="flex justify-end  w-full">
           <p
             className="font-Poppins font-[500] text-[12px] text-[#2190ffcb] cursor-pointer hover:text-[#2190fff6] transform transition-all duration-300"
-            onClick={() => changeModal(false)}
+            onClick={() => changeModalState('Singup')}
           >
             Forgot Password
           </p>
@@ -117,11 +132,13 @@ const LoginModal = ({
 
         <ModalFooter className="flex  flex-col px-0 gap-4">
           <Button
-            className="bg-[#2190ffcb]"
+            className={`${styles.button} ${
+              isLoading && 'cursor-not-allowed bg-[#2190ff9d]'
+            }`}
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting && isLoading}
           >
-            Sing In
+            {isLoading ? <Spinner size="md" /> : 'Login'}
           </Button>
         </ModalFooter>
         <div className="flex flex-col gap-2 items-center">
@@ -136,7 +153,7 @@ const LoginModal = ({
         <div className="flex justify-center items-center mb-4">
           <p
             className="text-center font-Poppins font-[500] text-[10px]"
-            onClick={() => changeModal(false)}
+            onClick={() => changeModalState('Singup')}
           >
             Have you already had an account?{' '}
             <span className="text-[#2190ffcb] text-[12px] cursor-pointer hover:text-[#2190fff6] transition-all duration-300">

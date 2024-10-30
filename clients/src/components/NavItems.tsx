@@ -15,7 +15,7 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import ProfileDropDown from './ProfileDropDown';
-import AuthModal from './AuthModal';
+import AuthScreen from '../views/AuthScreen';
 
 import styles from '@/utils/style';
 import Link from 'next/link';
@@ -97,7 +97,7 @@ const NavItems = ({ isAuthorized }: { isAuthorized: boolean }) => {
           <CgProfile className="text-[2rem] cursor-pointer" onClick={onOpen} />
         </NavbarContent>
       )}
-      {<AuthModal isOpen={isOpen} onOpenChange={onOpenChange} />}
+      {<AuthScreen isOpen={isOpen} onOpenChange={onOpenChange} />}
     </Navbar>
   );
 };
